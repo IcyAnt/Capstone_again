@@ -1,13 +1,28 @@
 package com.MeadowEast.xue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import android.media.MediaPlayer;
+import android.content.Context;
+import android.preference.PreferenceManager;
+import android.util.Log;
 //import java.text.DateFormat;
 //import java.text.ParseException;
-import java.util.*;
 
-import android.util.Log;
 
-abstract public class LearningProject {
+abstract public class LearningProject{
 	
 	private String name;
 	private int n, seen;
@@ -18,7 +33,11 @@ abstract public class LearningProject {
 	protected Card card = null;	
 	final static String TAG = "CC LearningProject";
 	
-	public LearningProject(String name, int n) {
+	MediaPlayer mpCorrect;
+	MediaPlayer mpWrong;
+	Context c;
+	
+	public LearningProject(String name, int n, Context context) {
 		this.n = n;
 		this.name = name;
 		this.seen = 0;
@@ -31,7 +50,11 @@ abstract public class LearningProject {
 		Log.d(TAG, "Reading status");
 		readStatus();
 		Log.d(TAG, "Making deck");
-		deck = makeDeck(n, 700);
+//		deck = makeDeck(n, 700);
+		c = context;
+		mpWrong = MediaPlayer.create(c, R.raw.wrong);
+		mpCorrect = MediaPlayer.create(c, R.raw.correct);
+		deck = makeDeck(n, Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("deck_target","")));
 		Log.d(TAG, "Exiting LearningProject constructor");
 	}	
 	
@@ -113,12 +136,18 @@ abstract public class LearningProject {
 	
 	public void right(){
 		cardStatus.right();
+		if (PreferenceManager.getDefaultSharedPreferences(c).getBoolean("sound_enable_checkbox", true) == true){
+			mpCorrect.start();
+		}
 		// put it in the appropriate index set
 		indexSets.get(cardStatus.getLevel()).add(cardStatus.getIndex());
 	}
 	
 	public void wrong(){
 		cardStatus.wrong();
+		if (PreferenceManager.getDefaultSharedPreferences(c).getBoolean("sound_enable_checkbox", true) == true){
+			mpWrong.start();
+		}
 		// return to the deck
 		deck.put(cardStatus);		
 	}

@@ -1,10 +1,11 @@
 package com.MeadowEast.xue;
 
 import java.util.*;
+import android.content.Context;
 
 public class EnglishChineseProject extends LearningProject {
-	EnglishChineseProject(int n){
-		super("EnglishChinese", n);
+	EnglishChineseProject(int n, Context context){
+		super("EnglishChinese", n, context);
 	}
 	protected String prompt(){
 		return card.getEnglish();

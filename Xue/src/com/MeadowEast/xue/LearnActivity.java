@@ -5,34 +5,60 @@ import java.io.IOException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewManager;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class LearnActivity extends Activity implements OnClickListener, OnLongClickListener {
 	static final String TAG = "LearnActivity";
-	static final int ECDECKSIZE = 40;
-	static final int CEDECKSIZE = 60;
+//	static final int ECDECKSIZE = 40;
+//	static final int CEDECKSIZE = 60;
+	
 	
 	LearningProject lp;
 	int itemsShown;
 	TextView prompt, answer, other, status;
 	Button advance, okay;
+	
 
+	Chronometer timer;
+	long savedTimer = 0;
+			
+	SharedPreferences prefs;
+	
+//	boolean sound_toggle;
+	int ECDECKSIZE;
+	int CEDECKSIZE;
+
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
         Log.d(TAG, "Entering onCreate");
-
+        
+        prefs = PreferenceManager.getDefaultSharedPreferences(this); 
+        
+        
+        
+        
         itemsShown = 0;
         prompt  = (TextView) findViewById(R.id.promptTextView);
         status  = (TextView) findViewById(R.id.statusTextView);
@@ -48,12 +74,46 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
     	findViewById(R.id.answerTextView).setOnLongClickListener(this);
     	findViewById(R.id.otherTextView).setOnLongClickListener(this);
     	
-    	if (MainActivity.mode.equals("ec"))
-    		lp = new EnglishChineseProject(ECDECKSIZE);	
-    	else
-    		lp = new ChineseEnglishProject(CEDECKSIZE);
+    	timer = (Chronometer) findViewById(R.id.chronometer);
+    	
+    	if (MainActivity.mode.equals("ec")){
+    		try {
+    			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
+    		} catch(NumberFormatException e){
+    			SharedPreferences.Editor editor = prefs.edit();
+    			editor.putString("ECDECKSIZE","40");
+    			editor.commit();
+    			ECDECKSIZE = 40;
+    		}
+    		if (ECDECKSIZE <= 0){
+    			SharedPreferences.Editor editor = prefs.edit();
+    			editor.putString("ECDECKSIZE","40");
+    			editor.commit();
+    			ECDECKSIZE = 40;
+    		}
+    		lp = new EnglishChineseProject(ECDECKSIZE, this);	
+    	}
+    	else{
+    		try {
+    			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
+    		} catch(NumberFormatException e){
+    			SharedPreferences.Editor editor = prefs.edit();
+    			editor.putString("CEDECKSIZE","60");
+    			editor.commit();
+    			CEDECKSIZE = 60;
+    		}
+    		if (CEDECKSIZE <= 0){
+    			SharedPreferences.Editor editor = prefs.edit();
+    			editor.putString("CEDECKSIZE","60");
+    			editor.commit();
+    			CEDECKSIZE = 60;
+    		}
+    		lp = new ChineseEnglishProject(CEDECKSIZE, this);
+    	}
     	clearContent();
     	doAdvance();
+    	timer.setBase(SystemClock.elapsedRealtime());
+		timer.start();
     }
 
     @Override
@@ -88,6 +148,7 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
 			prompt.setText(lp.prompt());
 			itemsShown = 1;
 			status.setText(lp.deckStatus());
+
 		}
 	}
 	
@@ -119,6 +180,7 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
 			prompt.setText(lp.prompt());
 			itemsShown = 1;
 			status.setText(lp.deckStatus());
+
 		} else {
 			((ViewManager) advance.getParent()).removeView(advance);
 			status.setText("");
@@ -174,4 +236,39 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
         	return super.onKeyDown(keyCode, event);
         }
     }
+    
+    @Override
+	public void onPause() {
+	    super.onPause();  // Always call the superclass method first
+	    savedTimer = timer.getBase()-SystemClock.elapsedRealtime();
+	    timer.stop();
+	}
+	
+	@Override
+	public void onResume() {
+	    super.onResume();  // Always call the superclass method first
+	    timer.setBase(SystemClock.elapsedRealtime()+savedTimer);
+	    timer.start();
+	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+            	Intent settings = new Intent(this, SettingsActivity.class);
+            	startActivity(settings);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    } 
+	
+	private OnPreferenceChangeListener myCheckboxListener = new OnPreferenceChangeListener() {
+
+	    public boolean onPreferenceChange(Preference preference, Object newValue) {
+	        // Read new value from Object newValue here
+	        return true;
+	    }
+	};
 }

@@ -14,5 +14,20 @@
     <string name="reallyQuit">Quit and lose all progress on current deck?</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
-
+    
+    <color name="background">#FF0000</color>
+    <item type="integer" name="default_EC_decksize">40</item>
+    <item type="integer" name="default_CE_decksize">60</item>
+    
+    <string name="title_SettingsActivity">Study Tool Settings</string>
+    <string name="title_sound_settings">Sound Settings</string>
+    <string name="title_sound_enable_checkbox">Sound Toggle</string>
+    <string name="summary_sound_enable_checkbox">Check to enable sounds</string>
+    <string name="title_deck_settings">Deck Settings</string>
+    <string name="title_ec_deck_size">English-Chinese Deck Size</string>
+    <string name="summary_ec_deck_size">Set the deck size for the English-Chinese deck</string>
+    <string name="title_ce_deck_size">Chinese-English Deck Size</string>
+    <string name="summary_ce_deck_size">Set the deck size for the Chinese deck</string>
+  	<string name="title_deck_target">Deck Target</string>
+  	<string name="summary_deck_target">This setting is used to limit the number of cards mainly being learned</string>
 </resources>

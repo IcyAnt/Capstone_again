@@ -2,15 +2,21 @@ package com.MeadowEast.xue;
 
 import java.io.File;
 
-import android.os.Bundle;
-import android.os.Environment;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.preference.PreferenceFragment;
 
 public class MainActivity extends Activity implements OnClickListener {
 
@@ -58,4 +64,21 @@ public class MainActivity extends Activity implements OnClickListener {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+            	Intent settings = new Intent(this, SettingsActivity.class);
+            	startActivity(settings);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    
+    
+    
 }

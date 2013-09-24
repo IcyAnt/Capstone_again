@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/title_SettingsActivity">
+    
+	<PreferenceCategory android:title="@string/title_sound_settings">
+		<CheckBoxPreference 
+		    android:key="sound_enable_checkbox"
+			android:title="@string/title_sound_enable_checkbox"
+			android:summary="@string/summary_sound_enable_checkbox">	    
+		</CheckBoxPreference>
+		
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/title_deck_settings">
+		 <EditTextPreference
+		     android:key="ce_decksize"
+             android:title="@string/title_ce_deck_size"
+             android:defaultValue="60"
+             android:summary="@string/summary_ce_deck_size"
+             android:inputType="number"
+             android:digits="0123456789"
+             android:dialogTitle="Chinese-English Deck Size (default=60)" />
+		 <EditTextPreference
+		     android:key="ec_decksize"
+             android:title="@string/title_ec_deck_size"
+             android:defaultValue="40"
+             android:summary="@string/summary_ec_deck_size"
+             android:inputType="number"
+             android:dialogTitle="English-Chinese Deck Size (default=40))" />
+		 <EditTextPreference
+		     android:key="deck_target"
+             android:title="@string/title_deck_target"
+             android:defaultValue="700"
+             android:summary="@string/summary_deck_target"
+             android:inputType="number"
+             android:dialogTitle="Deck Target (default=700))" />
+	</PreferenceCategory>
+</PreferenceScreen>
