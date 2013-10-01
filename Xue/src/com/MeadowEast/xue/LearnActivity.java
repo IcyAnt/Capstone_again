@@ -5,6 +5,9 @@ import java.io.IOException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,12 +29,17 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
 	int itemsShown;
 	TextView prompt, answer, other, status;
 	Button advance, okay;
+	public static MediaPlayer mp;
+	public static MediaPlayer mpwrong;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	mpwrong.create(this, R.raw.buzzer);
+    	mp.create(this, R.raw.magic);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
         Log.d(TAG, "Entering onCreate");
+        
 
         itemsShown = 0;
         prompt  = (TextView) findViewById(R.id.promptTextView);
@@ -148,7 +156,38 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
     	case R.id.promptTextView:
     	case R.id.answerTextView:
     	case R.id.otherTextView:
-    		Toast.makeText(this, "Item index: "+lp.currentIndex(), Toast.LENGTH_LONG).show();
+    		Log.d("Xue ISSELECTED", "About to check");
+    		int start = ((TextView) v).getSelectionStart();
+    		int end = ((TextView) v).getSelectionEnd();
+    		if(start < end)
+    		{
+    			Log.d("Xue ISSELECTED", "yes");
+    			CharSequence selectedSequence = ((TextView) v).getText();
+    			selectedSequence = selectedSequence.subSequence(start, end);
+    			String selected = selectedSequence.toString();
+    			//selected = selected.substring(start, end);
+    			Log.d("Xue ISSELECTED", selected);
+    			Uri dictionary = Uri.parse("http://www.mdbg.net/chindict/chindict.php?page=worddict&wdrst=0&wdqb=" + selected);
+    			Intent webview = new Intent(Intent.ACTION_VIEW, dictionary);
+    			startActivity(webview);
+    		}
+    		else {
+    			Log.d("Xue ISSELECTED", "no");
+	    		Intent email = new Intent(Intent.ACTION_SENDTO);
+	    		Uri uri = Uri.parse("mailto:kgall@hunter.cuny.edu");
+	    		email.setData(uri);
+	    		//email.putExtra(Intent.EXTRA_EMAIL, new String[]{"kgall@hunter.cuny.edu"});
+	    		if(MainActivity.mode == "ec")
+	    		{
+	    			email.putExtra(Intent.EXTRA_SUBJECT, "Xue English to Chinese index " + lp.currentIndex());
+	    		}
+	    		else {
+	    			email.putExtra(Intent.EXTRA_SUBJECT, "Xue Chinese to English index " + lp.currentIndex());
+	    		}
+	    		email.putExtra(Intent.EXTRA_TEXT, "English: " + lp.getEnglish() +"\nPinyin: "+ lp.getPinyin() + "\nHanzi: " + lp.getHanzi() + "\nComments (评论): \n");
+	    		startActivity(Intent.createChooser(email, "Send Comments"));
+	    		Toast.makeText(this, "Item index: "+lp.currentIndex(), Toast.LENGTH_LONG).show();
+    		}
     		break;
     	}
     	return true;
