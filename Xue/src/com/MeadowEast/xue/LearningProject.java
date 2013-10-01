@@ -16,8 +16,33 @@ import java.util.Map;
 import java.util.Random;
 import android.media.MediaPlayer;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.ViewManager;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.app.Activity;
 //import java.text.DateFormat;
 //import java.text.ParseException;
 
@@ -36,6 +61,8 @@ abstract public class LearningProject{
 	MediaPlayer mpCorrect;
 	MediaPlayer mpWrong;
 	Context c;
+	int target;
+	
 	
 	public LearningProject(String name, int n, Context context) {
 		this.n = n;
@@ -54,7 +81,26 @@ abstract public class LearningProject{
 		c = context;
 		mpWrong = MediaPlayer.create(c, R.raw.wrong);
 		mpCorrect = MediaPlayer.create(c, R.raw.correct);
-		deck = makeDeck(n, Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("deck_target","")));
+		
+				
+		if (MainActivity.mode.equals("ec")){
+			target = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
+			if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_EC_decktarget))){
+				SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+    			editor.putString("ec_deck_target", c.getResources().getString(R.string.default_min_EC_decktarget));
+    			editor.commit();
+				target=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
+			}
+		}
+		else if (MainActivity.mode.equals("ce")){
+			target = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ce_deck_target",""));
+			if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget))){
+				target=Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget));
+			} 
+		}
+		
+		deck = makeDeck(n,target);
+		
 		Log.d(TAG, "Exiting LearningProject constructor");
 	}	
 	

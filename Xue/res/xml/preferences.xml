@@ -12,28 +12,42 @@
 		
 	</PreferenceCategory>
 	
-	<PreferenceCategory android:title="@string/title_deck_settings">
+	<PreferenceCategory android:title="@string/title_ce_deck_settings">
 		 <EditTextPreference
 		     android:key="ce_decksize"
              android:title="@string/title_ce_deck_size"
-             android:defaultValue="60"
+             android:defaultValue="@string/default_CE_decksize"
              android:summary="@string/summary_ce_deck_size"
              android:inputType="number"
              android:digits="0123456789"
-             android:dialogTitle="Chinese-English Deck Size (default=60)" />
+             android:dialogTitle="@string/dialogtitle_ce_deck_size" />
+		<EditTextPreference
+		     android:key="ce_deck_target"
+             android:title="@string/title_ce_deck_target"
+             android:defaultValue="@string/default_CE_decktarget"
+             android:summary="@string/summary_ce_deck_target"
+             android:inputType="number"
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ce_deck_target" />		 
+	</PreferenceCategory>
+		 
+	<PreferenceCategory android:title="@string/title_ec_deck_settings">
 		 <EditTextPreference
 		     android:key="ec_decksize"
              android:title="@string/title_ec_deck_size"
-             android:defaultValue="40"
+             android:defaultValue="@string/default_EC_decksize"
              android:summary="@string/summary_ec_deck_size"
              android:inputType="number"
-             android:dialogTitle="English-Chinese Deck Size (default=40))" />
-		 <EditTextPreference
-		     android:key="deck_target"
-             android:title="@string/title_deck_target"
-             android:defaultValue="700"
-             android:summary="@string/summary_deck_target"
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ec_deck_size" />
+		<EditTextPreference
+		     android:key="ec_deck_target"
+             android:title="@string/title_ec_deck_target"
+             android:defaultValue="@string/default_EC_decktarget"
+             android:summary="@string/summary_ec_deck_target"
              android:inputType="number"
-             android:dialogTitle="Deck Target (default=700))" />
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ec_deck_target" />		 
 	</PreferenceCategory>
+	
 </PreferenceScreen>

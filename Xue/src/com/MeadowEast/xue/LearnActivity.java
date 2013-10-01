@@ -81,32 +81,32 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
     			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
     		} catch(NumberFormatException e){
     			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("ECDECKSIZE","40");
+    			editor.putString("ec_decksize", getString(R.string.default_EC_decksize));
     			editor.commit();
-    			ECDECKSIZE = 40;
+    			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
     		}
-    		if (ECDECKSIZE <= 0){
+    		if (ECDECKSIZE < Integer.parseInt(getString(R.string.default_min_EC_decksize))){
     			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("ECDECKSIZE","40");
+    			editor.putString("ec_decksize", getString(R.string.default_min_EC_decksize));
     			editor.commit();
-    			ECDECKSIZE = 40;
+    			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
     		}
     		lp = new EnglishChineseProject(ECDECKSIZE, this);	
     	}
     	else{
-    		try {
+   		try {
     			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
     		} catch(NumberFormatException e){
     			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("CEDECKSIZE","60");
+    			editor.putString("ce_decksize", getString(R.string.default_CE_decksize));
     			editor.commit();
-    			CEDECKSIZE = 60;
+    			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
     		}
-    		if (CEDECKSIZE <= 0){
+    		if (CEDECKSIZE < Integer.parseInt(getString(R.string.default_min_CE_decksize))){
     			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("CEDECKSIZE","60");
+    			editor.putString("ce_decksize", getString(R.string.default_min_CE_decktarget));
     			editor.commit();
-    			CEDECKSIZE = 60;
+    			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
     		}
     		lp = new ChineseEnglishProject(CEDECKSIZE, this);
     	}
