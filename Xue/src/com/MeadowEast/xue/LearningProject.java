@@ -115,12 +115,14 @@ abstract public class LearningProject {
 		cardStatus.right();
 		// put it in the appropriate index set
 		indexSets.get(cardStatus.getLevel()).add(cardStatus.getIndex());
+		//LearnActivity.mp.start();
 	}
 	
 	public void wrong(){
 		cardStatus.wrong();
 		// return to the deck
-		deck.put(cardStatus);		
+		deck.put(cardStatus);
+		//LearnActivity.mpwrong.start();
 	}
 	
 	String deckStatus(){
@@ -180,6 +182,17 @@ abstract public class LearningProject {
 			statusobjectFIS.close();
 			Log.d(TAG, "OBJECT status file read without problems");
 		} catch (Exception e) { Log.d(TAG, "Error in readStatus"); }
+	}
+
+
+	public String getHanzi() {
+		return card.getHanzi();
+	}
+	public String getPinyin() {
+		return card.getPinyin();
+	}
+	public String getEnglish() {
+		return card.getEnglish();
 	}
 
 }
