@@ -64,6 +64,7 @@ public final class R {
         public static final int hello_world=0x7f060001;
         public static final int menu_settings=0x7f060002;
         public static final int no=0x7f06000d;
+        public static final int ok=0x7f060028;
         public static final int okay=0x7f060008;
         public static final int quit=0x7f06000a;
         public static final int reallyQuit=0x7f06000b;
@@ -84,6 +85,9 @@ public final class R {
         public static final int title_ec_deck_target=0x7f06001e;
         public static final int title_sound_enable_checkbox=0x7f060018;
         public static final int title_sound_settings=0x7f060017;
+        public static final int warn=0x7f060029;
+        public static final int warn_reset_default=0x7f06002b;
+        public static final int warn_reset_min=0x7f06002a;
         public static final int yes=0x7f06000c;
     }
     public static final class style {

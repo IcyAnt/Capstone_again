@@ -2,6 +2,7 @@ package com.MeadowEast.xue;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -20,9 +21,11 @@ import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 
+
 public class SettingsActivity extends Activity {
 
-//	public static SharedPreferences sp;
+static //	public static SharedPreferences sp;
+	Context c;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,7 @@ public class SettingsActivity extends Activity {
 		setContentView(R.layout.activity_settings);
 		getFragmentManager().beginTransaction().replace(android.R.id.content, new PrefsFragment()).commit();
 		PreferenceManager.setDefaultValues(SettingsActivity.this, R.xml.preferences, true);
-		
+		c = this;
 //		sp = PreferenceManager.getDefaultSharedPreferences(this); 
 	}
 
@@ -39,7 +42,7 @@ public class SettingsActivity extends Activity {
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-
+			
 			// Load the preferences from an XML resource
 			addPreferencesFromResource(R.xml.preferences);
 			
@@ -59,6 +62,8 @@ public class SettingsActivity extends Activity {
 	        			val = Integer.parseInt((String) newValue);
 	        		} catch(NumberFormatException e){
 	        			val = Integer.parseInt(getString(R.string.default_CE_decksize));
+	        			warn("alert","default");
+	        			
 	        			/*
 	        			SharedPreferences.Editor editor = sp.edit();
 	        			editor.putString("ce_decksize",getString(R.string.default_CE_decksize));
@@ -68,6 +73,7 @@ public class SettingsActivity extends Activity {
 	        		}
 	            	if (val < Integer.parseInt(getString(R.string.default_min_CE_decksize))){
 	            		val = Integer.parseInt(getString(R.string.default_min_CE_decksize));
+	            		warn("alert","min");
 	            	/*	SharedPreferences.Editor editor = sp.edit();
 	        			editor.putString("ce_decksize", getString(R.string.default_min_CE_decksize));
 	        			editor.commit();
@@ -81,6 +87,7 @@ public class SettingsActivity extends Activity {
 	                return true;
 	            }
 
+
 	        });
 	        
 	        Preference cedecktarget = (Preference) findPreference("ce_deck_target");
@@ -93,9 +100,13 @@ public class SettingsActivity extends Activity {
 	        			val = Integer.parseInt((String) newValue);
 	        		} catch(NumberFormatException e){
 	        			val = Integer.parseInt(getString(R.string.default_CE_decktarget));
+	        			warn("alert","default");
+	        			
 	        		}
 	            	if (val < Integer.parseInt(getString(R.string.default_min_CE_decktarget))){
 	            		val = Integer.parseInt(getString(R.string.default_min_CE_decktarget));
+	            		warn("alert","min");
+	            		
 	            	}
 	                preference.setTitle(getString(R.string.title_ce_deck_target) + " : " + Integer.toString(val));
 	            	//preference.setTitle(getString(R.string.title_ce_deck_target) + " : " + sp.getString("ce_deck_target",""));
@@ -113,9 +124,11 @@ public class SettingsActivity extends Activity {
 	        			val = Integer.parseInt((String) newValue);
 	        		} catch(NumberFormatException e){
 	        			val = Integer.parseInt(getString(R.string.default_EC_decksize));
+	        			warn("alert","default");
 	        		}
 	            	if (val < Integer.parseInt(getString(R.string.default_min_EC_decksize))){
 	            		val = Integer.parseInt(getString(R.string.default_min_EC_decksize));
+	            		warn("alert","min");
 	            	}
 	                preference.setTitle(getString(R.string.title_ec_deck_size) + " : " + Integer.toString(val));
 	            	//preference.setTitle(getString(R.string.title_ec_deck_size) + " : " + sp.getString("ec_decksize",""));
@@ -133,20 +146,65 @@ public class SettingsActivity extends Activity {
 	        			val = Integer.parseInt((String) newValue);
 	        		} catch(NumberFormatException e){
 	        			val = Integer.parseInt(getString(R.string.default_EC_decktarget));
+	        			warn("alert","default");
+	        			
 	        		}
 	            	if (val < Integer.parseInt(getString(R.string.default_min_EC_decktarget))){
 	            		val = Integer.parseInt(getString(R.string.default_min_EC_decktarget));
+	            		warn("alert","min");
 	            	}
 	                preference.setTitle(getString(R.string.title_ec_deck_target) + " : " + Integer.toString(val));
 	                //preference.setTitle(getString(R.string.title_ec_deck_target) + " : " + sp.getString("ec_deck_target",""));
 	                return true;
 	            }
+
+				
 	        });
-	                
+	        
+	              
 		}
 		
 
 		
+		protected void warn(String i, String j) {
+			if (i=="toast"){
+				if (j=="default"){
+					Toast.makeText(c, getString(R.string.warn_reset_default), Toast.LENGTH_LONG).show();
+				}
+				else if (j=="min"){
+					Toast.makeText(c, getString(R.string.warn_reset_min), Toast.LENGTH_LONG).show();
+				}
+			}
+			else if (i=="alert"){
+				if (j=="default"){
+					new AlertDialog.Builder(c)
+	                   .setIcon(android.R.drawable.ic_dialog_alert)
+	                   .setTitle(R.string.warn)
+	                   .setMessage(R.string.warn_reset_default)
+	                   .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+	                       public void onClick(DialogInterface dialog, int which) {
+	                           dialog.cancel();  
+	                       }
+	                   })
+	                   .show();
+				}
+				else if (j=="min"){
+					new AlertDialog.Builder(c)
+	                   .setIcon(android.R.drawable.ic_dialog_alert)
+	                   .setTitle(R.string.warn)
+	                   .setMessage(R.string.warn_reset_min)
+	                   .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+	                       public void onClick(DialogInterface dialog, int which) {
+	                           dialog.cancel();  
+	                       }
+	                   })
+	                   .show();
+				}
+			}
+		}
+
+
+
 		@Override
 	    public void onResume() {
 	        super.onResume();

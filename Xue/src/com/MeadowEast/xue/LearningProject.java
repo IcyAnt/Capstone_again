@@ -208,6 +208,11 @@ abstract public class LearningProject{
 		for (int i=0; i<5; ++i) n[i] = indexSets.get(i).size();
 //		return String.format("  %7d  %4d  %4d  %4d  %4d  %7d  %5d  ", n[0], n[1], n[2], n[3], n[4],
 //				n[2]+n[3]+n[4], n[0]+n[1]+n[2]+n[3]+n[4]);
+		Log.d(TAG, Integer.toString(n[0]));
+		Log.d(TAG, Integer.toString(n[1]));
+		Log.d(TAG, Integer.toString(n[2]));
+		Log.d(TAG, Integer.toString(n[3]));
+		Log.d(TAG, Integer.toString(n[4]));
 		return String.format("    %d   %d + %d = %d    %d + %d = %d    %d",
 				n[0], n[1], n[2], n[1]+n[2], n[3], n[4], n[3]+n[4], n[0]+n[1]+n[2]+n[3]+n[4]);
 	}

@@ -46,4 +46,9 @@
   	<string name="title_ce_deck_target">Deck Target</string>
   	<string name="summary_ce_deck_target">Limit the number of cards mainly being learned for the Chinese-English Deck</string>
   	<string name="dialogtitle_ce_deck_target">Deck Target (default=700, min=50))</string>
+  	
+  	<string name="ok">OK</string>
+  	<string name="warn">Warning</string>
+  	<string name="warn_reset_min">Inputted value was below minimum, the minimum value will be used instead</string>
+  	<string name="warn_reset_default">Inputted value was invalid, this setting is reset to default</string>
 </resources>
