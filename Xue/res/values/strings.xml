@@ -49,6 +49,6 @@
   	
   	<string name="ok">OK</string>
   	<string name="warn">Warning</string>
-  	<string name="warn_reset_min">Inputted value was below minimum, the minimum value will be used instead</string>
-  	<string name="warn_reset_default">Inputted value was invalid, this setting is reset to default</string>
+  	<string name="warn_reset_min">Value was below minimum; the minimum value will be used instead.</string>
+  	<string name="warn_reset_default">Value was invalid; this setting is reset to default.</string>
 </resources>
