@@ -1,9 +1,12 @@
 package com.MeadowEast.xue;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+
 import android.util.Log;
 
 public class AllCards {
@@ -17,13 +20,20 @@ public class AllCards {
 	}
 	private Card [] cardArray;
 	private AllCards() {		
-		File file =  new File(MainActivity.filesDir, "vocabUTF8.txt");
+		InputStream is = null;
+		try {
+			is = MainActivity.ctx.getAssets().open("vocabUTF8.txt");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		//File file =  new File(MainActivity.filesDir, "vocabUTF8.txt");
 		ArrayList<Card> allCards = new ArrayList<Card>();
-		Log.d(TAG, "File is "+ file);
-		Log.d(TAG, "Path is "+ file.getAbsolutePath());
+		//Log.d(TAG, "File is "+ file);
+		//Log.d(TAG, "Path is "+ file.getAbsolutePath());
 
 		try {
-			FileReader fr = new FileReader ( file );
+			InputStreamReader fr = new InputStreamReader ( is );
 			Log.d(TAG, "FileReader okay");
 			BufferedReader in = new BufferedReader( fr );
 			Log.d(TAG, "BufferedReader okay");

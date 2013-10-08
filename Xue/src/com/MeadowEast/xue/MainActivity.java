@@ -2,10 +2,11 @@ package com.MeadowEast.xue;
 
 import java.io.File;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -18,6 +19,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public static File filesDir;
 	public static String mode;
 	static final String TAG = "XUE MainActivity";
+	static Context ctx;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,9 @@ public class MainActivity extends Activity implements OnClickListener {
     	ceButton.setOnClickListener(this);
     	exitButton.setOnClickListener(this);
         File sdCard = Environment.getExternalStorageDirectory();
-		filesDir = new File (sdCard.getAbsolutePath() + "/Android/data/com.MeadowEast.xue/files");
+		filesDir = new File (sdCard.getAbsolutePath());
 		Log.d(TAG, "xxx filesDir="+filesDir);
+		ctx = this;
     }
 
     public void onClick(View v){

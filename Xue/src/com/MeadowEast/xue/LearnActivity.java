@@ -1,6 +1,7 @@
 package com.MeadowEast.xue;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -25,7 +26,6 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 	static final String TAG = "LearnActivity";
 	static final int ECDECKSIZE = 40;
 	static final int CEDECKSIZE = 60;
-	
 	LearningProject lp;
 
 	TextView prompt, answer, other, status,itemsShown;
@@ -63,7 +63,9 @@ public class LearnActivity extends Activity implements OnLongClickListener {
         other   = (TextView) findViewById(R.id.otherTextView);
         answer  = (TextView) findViewById(R.id.answerTextView);
         itemsShown  = (TextView) findViewById(R.id.itemshow);
-        itemsShown.setTag(0);
+        itemsShown.setText("0");   //****** setTag Changed to setText only way you can save values of every question
+        
+        
         //----- begin change -----
         
         prompt.setTextSize(30);
@@ -81,7 +83,8 @@ public class LearnActivity extends Activity implements OnLongClickListener {
     	    	//show next if user is right
     	    	doOkay(1);
     	    }
-    	    public void onSwipeRight() {
+    	    @SuppressWarnings("unchecked")
+			public void onSwipeRight() {
     	    	//set the animation 
     	    	vf.setInAnimation(AnimationUtils.loadAnimation(LearnActivity.this,
     	                 R.anim.push_right_in));
@@ -91,7 +94,17 @@ public class LearnActivity extends Activity implements OnLongClickListener {
     			
     			if (vf.getDisplayedChild() != 0)//not first view
     			{
+
     				vf.showPrevious();//show previous view
+    				
+    				//************ since we went back to a previous card,
+    				//************ we then get the card and card status values of question we currently viewing now in the Viewflipper
+    				//************ which was set as tag to the viewflipper child
+    				//************ and set it as the current card being viewed in the deck
+    				// For example : we were on card 4, we then undo to go to question 2. first card 4 status will be set as tag to child 4 
+    				// in viewflipper and when we go to child 2 where card 2 is. we get getTag() that was saved before when forst answered
+    				// card 2. and set it as the current card and cardstatus bein delt with in learningProject.
+    				lp.setCurrent((HashMap<Card, CardStatus>) vf.getChildAt(vf.getDisplayedChild()).getTag());
     				
     				LinearLayout tmplayout = (LinearLayout) vf.getCurrentView();
     				prompt  = (TextView) tmplayout.findViewById(R.id.promptTextView);
@@ -99,6 +112,7 @@ public class LearnActivity extends Activity implements OnLongClickListener {
     		        other   = (TextView) tmplayout.findViewById(R.id.otherTextView);
     		        answer  = (TextView) tmplayout.findViewById(R.id.answerTextView);
     		        itemsShown  = (TextView) tmplayout.findViewById(R.id.itemshow);
+    		        
     		        
     		        status.setText(lp.deckStatus());
     			}
@@ -148,7 +162,7 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 	private void doAdvance(){
 		
 		
-		if (itemsShown.getTag().equals(0)){
+		if (itemsShown.getText().toString().equals("0")){
 			if (lp.next()){
 				prompt.setText(lp.prompt());
 				answer.setText(lp.answer());
@@ -157,38 +171,36 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 				other.setVisibility(View.INVISIBLE);
 				
 				status.setText(lp.deckStatus());
-				itemsShown.setTag(1);
+				itemsShown.setText("1");  //****** setTag Changed to setText only way you can save values of every question
 			} else {
 				Log.d(TAG, "Error: Deck starts empty");
 				throw new IllegalStateException("Error: Deck starts empty.");
 			}
-		} else if (itemsShown.getTag().equals(1)){
+		} else if (itemsShown.getText().toString().equals("1")){ //****** getText to get saved values inside the textView and as it returns charSequence we had to use toString() to compare it to another string
 			answer.setVisibility(View.VISIBLE);
-			itemsShown.setTag(2);
-		} else if (itemsShown.getTag().equals( 2)){
+			itemsShown.setText("2"); //****** setTag Changed to setText only way you can save values of every question
+		} else if (itemsShown.getText().toString().equals("2")){ //****** getText to get saved values inside the textView and as it returns charSequence we had to use toString() to compare it to another string
 			other.setVisibility(View.VISIBLE);
 			//advance.setText("next");
-			itemsShown.setTag(3);
+			itemsShown.setText("3"); //****** setTag Changed to setText only way you can save values of every question
 		} 
 		
 	}
 	
-	/*	function addLayout
-		
-		create new layout that has 3 textviews , add it to the viewflipper.
-	*/
-	
-	/**
+	/**	function addLayout
+	 *	
+	 * create new layout that has 3 textviews , add it to the viewflipper.
 	 * add Layout when swipe left 
 	 * 
-	 * 
+	 *
 	 */
-	
 	@SuppressLint({ "ParserError", "ParserError", "ParserError" })
-	private void addLayout() {
+	
+	//********* Added ans as parameter so we can pass the value of swipe up (right) or left(wrong) to this method. to control how the
+	//********* Exiting view will animate Upwards animation or left Animation
+	private void addLayout(int ans) {
 		
 		// create new layout
-		
 		LinearLayout datalayout1 = new LinearLayout(this);
 		
 		//set the layout orientation to vertical
@@ -199,42 +211,59 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 		prompt.setText(lp.prompt());
 		prompt.setId(R.id.promptTextView);
 		
-		datalayout1.addView(prompt,new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		//********** Changed from VIEWGROUP TO LINEARLAYOUT. its best to use the parent type when you add a new view
+		//Like here datalayout1 is LinearLayout so when u add a view to it, Use layoutParams of LinearLayout
+		//also added the 0.3 weight.
+		datalayout1.addView(prompt,new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,0.3f));
+		
 		//create new answer textview
 		answer = new TextView(this);
 		answer.setText(lp.answer());
 		answer.setVisibility(View.INVISIBLE);
 		answer.setId(R.id.answerTextView);
 		
-		datalayout1.addView(answer,new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		//********** Changed from VIEWGROUP TO LINEARLAYOUT. its best to use the parent type when you add a new view
+		//Like here datalayout1 is LinearLayout so when u add a view to it, Use layoutParams of LinearLayout
+		//also added the 0.3 weight.
+		datalayout1.addView(answer,new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,0.3f));
+		
 		//create new other textview
 		other = new TextView(this);
 		other.setText(lp.other());
 		other.setVisibility(View.INVISIBLE);
 		other.setId(R.id.otherTextView);
 		
-		
-		datalayout1.addView(other,new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		//********** Changed from VIEWGROUP TO LINEARLAYOUT. its best to use the parent type when you add a new view
+		//Like here datalayout1 is LinearLayout so when u add a view to it, Use layoutParams of LinearLayout
+		//also added the 0.3 weight.
+		datalayout1.addView(other,new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,0.3f));
 		
 		// create new status view
 		status = new TextView(this);
 		status.setText(lp.deckStatus());
 		status.setId(R.id.statusTextView);
 		
-		datalayout1.addView(status,new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		//********** Changed from VIEWGROUP TO LINEARLAYOUT. its best to use the parent type when you add a new view
+		//Like here datalayout1 is LinearLayout so when u add a view to it, Use layoutParams of LinearLayout
+		//also added the 0.3 weight.
+		datalayout1.addView(status,new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,0.3f));
+		
+		//********** The View was supposed to be invisible but the code for invisible was not set
 		//this is invisible view that include the value of swipedown guesture count.
-		//
 		itemsShown = new TextView(this);
-		itemsShown.setTag(1);
+		itemsShown.setVisibility(View.GONE);//added
+		itemsShown.setText("1");
 		itemsShown.setId(R.id.itemshow);
 		
-		
-		datalayout1.addView(itemsShown,new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		//********** Changed from VIEWGROUP TO LINEARLAYOUT. its best to use the parent type when you add a new view
+		//Like here datalayout1 is LinearLayout so when u add a view to it, Use layoutParams of LinearLayout
+		//also added the 0.3 weight.
+		datalayout1.addView(itemsShown,new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,0.3f));
 		
 		//set text size and paddings
 		prompt.setTextSize(30);
@@ -251,38 +280,77 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 		status.setGravity(Gravity.CENTER);
 		
 		
-		
-		
 		// add layout to the viewflipper.
 		// set the left animation  to flipper 
 		// call show next , so that new layout is diplayed
-		vf.addView(datalayout1);
+		//********** Changed from VIEWGROUP TO VIEWFLIPPER. its best to use the parent type when you add a new view
+		//Like here "vf" is ViewFlipper so when u add a view to it, Use layoutParams of ViewFlipper.***********
+		vf.addView(datalayout1,new ViewFlipper.LayoutParams(
+				ViewFlipper.LayoutParams.MATCH_PARENT, ViewFlipper.LayoutParams.MATCH_PARENT));
+		
 		
 		vf.setInAnimation(AnimationUtils.loadAnimation(this,
                  R.anim.push_left_in));
-		vf.setOutAnimation(AnimationUtils.loadAnimation(this,
-                 R.anim.push_left_out));
+		
+		
+		if (ans == 1 )//swipe up?
+		{
+			//************* if right, set Animation to move up(Our new Created Animation)
+			vf.setOutAnimation(AnimationUtils.loadAnimation(this,
+					R.anim.push_up_out));
+		}else{
+			//************* else, set normal action Animation to move left since answer was not right
+			vf.setOutAnimation(AnimationUtils.loadAnimation(this,
+		            R.anim.push_left_out));
+		}
 		vf.showNext();
+		
+		//********* we get current child number and set its tag to current card and cardstatus so we can do an undo at future and will be always able to retrive values by calling getTag() onChild
+		vf.getChildAt(vf.getDisplayedChild()).setTag(lp.getCurrent()); 
+
 	}
 
 	
 	/**
 	 * this function is called when swipe left and right
-	 * @param w_r  flag of wrong or right
+	 * @param ans  flag of wrong or right
 	 * 
 	 */
-    
+	@SuppressWarnings("unchecked")
 	@SuppressLint("NewApi")
-	private void doOkay(int w_r){
+	private void doOkay(boolean ans){
 		
 		if (vf.getDisplayedChild() < vf.getChildCount()-1)//viewflipper has nextview?
 		{
 			// set the left animation and show next view 
 			vf.setInAnimation(AnimationUtils.loadAnimation(this,
 	                 R.anim.push_left_in));
-			vf.setOutAnimation(AnimationUtils.loadAnimation(this,
-	                 R.anim.push_left_out));
-			vf.showNext();
+			
+			
+			/****
+			 * Change stated here
+			 * 
+			 */
+			if (ans == 1 )//swipe up?
+			{
+				//*********  if right, set Animation to move up( Our new Created Animation : res>anim>push_up_out.xml )
+				vf.setOutAnimation(AnimationUtils.loadAnimation(this,
+						R.anim.push_up_out));
+
+			}else{
+				
+				//******* if answer was wrong move to next card, set normal action Animation to move left since answer was wrong
+				vf.setOutAnimation(AnimationUtils.loadAnimation(this,
+			            R.anim.push_left_out));
+				
+			}
+			//******* added so if answer was right move to the top card
+			vf.setDisplayedChild(vf.getChildCount()-1);
+
+			/*
+			 * ended here 
+			 */
+			
 			// get the question & answer & other & itemsshown text view by id
 			LinearLayout tmplayout = (LinearLayout) vf.getCurrentView();
 			prompt  = (TextView) tmplayout.findViewById(R.id.promptTextView);
@@ -290,20 +358,38 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 	        other   = (TextView) tmplayout.findViewById(R.id.otherTextView);
 	        answer  = (TextView) tmplayout.findViewById(R.id.answerTextView);
 	        itemsShown  = (TextView) tmplayout.findViewById(R.id.itemshow);
-	        
-	        
-	        
-	        if (w_r == 1 )
+	        	        	        
+	        if (ans == 1 )
 			{
-	        	//if user swipe up, remove current view in the deck
+	        	//******* new methods that adds 2 to level to fix the wrong answer since we are in undo
+	        	// only if the first answer was wrong (Method can be found in LearningProject)
+	        	lp.UndoRight(); 
 	        	
-	        	lp.right();
-	        	lp.next();
-	        	lp.seen--;
-				vf.removeViewAt(vf.getDisplayedChild()-1);
-				
+	        	//***** removed it as in this part because we are in UNDO so we don't need to check if there is next question
+	        	//lp.next();
+	        	
+	        	//***** removed it as it will add another question although there was not answered yet
+	        	//lp.seen--;
+	        	
+	        	//******* remove this code to allow undo for right answers otherwise it deletes it
+				//vf.removeViewAt(dis);	
+			}else//swipe left?
+			{	
+				lp.UndoWrong();
 			}
+	        
+
 	        status.setText(lp.deckStatus());
+	        
+			//************ since we went back to a previous card,
+			//************ we then get the card and card status values of question we currently viewing now in the Viewflipper
+			//************ which was set as tag to the viewflipper child
+			//************ and set it as the current card being viewed in the deck
+			// For example : we were on card 4, we then undo to go to question 2. first card 4 status will be set as tag to child 4 
+			// in viewflipper and when we go to child 2 where card 2 is. we get getTag() that was saved before when forst answered
+			// card 2. and set it as the current card and cardstatus bein delt with in learningProject.
+			lp.setCurrent((HashMap<Card, CardStatus>) vf.getChildAt(vf.getDisplayedChild()).getTag());
+	
 			return;
 		}
 		if (nDone == 1)//all question displayed?
@@ -318,37 +404,50 @@ public class LearnActivity extends Activity implements OnLongClickListener {
 				return;
 			}
 		// Do nothing unless answer has been seen
-		if (itemsShown.getTag().equals(1) || itemsShown.getTag().equals(0))
+		if (itemsShown.getText().toString().equals("1") || itemsShown.getText().toString().equals("0"))
 		{
-			Toast.makeText(LearnActivity.this, "Do nothing unless answer has been seen", Toast.LENGTH_SHORT).show();
+			//******* Changed Toast_SHORT to TOAT_LONG so it can stay for a longer time on screen before it dissappers
+			Toast.makeText(LearnActivity.this, "Please swipe down first to view answer", Toast.LENGTH_LONG).show();
 			return;
 		}
+		
 		// Got it right
-		//----- add change -----
-		
-		//----- end change -----
-		
-		if (w_r == 1)//swipe up?
-			lp.right();
+		//----- add change -----		
+		if (ans == 1)//swipe up?
+		{	lp.right();
+		}
 		else//swipe left?
-			lp.wrong();
+		{	lp.wrong();}
+
+		//********* we get current child number and set its tag to current card and cardstatus so we can do an undo at future 
+		vf.getChildAt(vf.getDisplayedChild()).setTag(lp.getCurrent()); 
+		
 		
 		if (lp.next()){//have next question?
 			
-			addLayout();
+			addLayout(ans);// added ans to pass value of answer to 
+			               // addLayout method to set the animation path upwards if 1 else if otherwise.
 			nDone = 0;
-			if (w_r == 1 )//swipe up?
+			//******* remove this code to allow undo for both wrong and right answers 
+			/******** as this code remove the view that is answered right
+			 *
+			if (ans == 1 )//swipe up?
 			{
 				// remove current card in the deck
-				vf.removeViewAt(vf.getDisplayedChild()-1);
+				vf.removeViewAt(vf.getDisplayedChild()-1); 
 				
 			}
+			*/
 			status.setText(lp.deckStatus());
 			
 		} else {
 			//((ViewManager) advance.getParent()).removeView(advance);
 			status.setText("");
 			nDone = 1;
+			
+			//****** added this toast to show message telling user to swipe upwards to end
+			Toast.makeText(LearnActivity.this, "Please swipe upwards to end the round", Toast.LENGTH_LONG).show();
+			
 			//okay.setText("done");
 			
 		}
@@ -400,4 +499,3 @@ public class LearnActivity extends Activity implements OnLongClickListener {
         }
     }
 }
-

@@ -10,14 +10,15 @@ import android.util.Log;
 abstract public class LearningProject {
 	
 	private String name;
-	private int n, seen;
+	public int n, seen;
 	protected List<IndexSet> indexSets;
 	protected Map<Integer, Date> timestamps;
 	protected Deck deck;
 	protected CardStatus cardStatus = null;
 	protected Card card = null;	
 	final static String TAG = "CC LearningProject";
-	
+	HashMap<Card, CardStatus> cardLevel = new HashMap<Card, CardStatus>();
+
 	public LearningProject(String name, int n) {
 		this.n = n;
 		this.name = name;
@@ -38,7 +39,7 @@ abstract public class LearningProject {
 
 	// n is the size of the deck
 	// target is used to limit the number at Levels 1 and 2, the ones
-	//   mainly being learned
+	// mainly being learned
  	private Deck makeDeck(int n, int target){
  		Date now = new Date();
 		Random r = new Random();
@@ -84,11 +85,24 @@ abstract public class LearningProject {
 					timestamps.put(index, now);
 					d.put(new CardStatus(index, level));
 				} else { // if it's too recent, put it back
-					indexSets.get(level).add(index);
+					targetSet.add(index);
 				}
 			}
 		}
 		return d;
+	}
+ 	
+ 	
+	public HashMap<Card, CardStatus> getCurrent(){
+		HashMap<Card, CardStatus> sh = new HashMap<Card,CardStatus>();
+		sh.put(card,cardStatus);
+		return sh;	
+	}
+	
+	public void setCurrent(HashMap<Card, CardStatus> sh){
+		Object[] cards= sh.keySet().toArray();
+		card = (Card) cards[0];
+		cardStatus = sh.get(card);
 	}
 	
 	public boolean next() {
@@ -96,6 +110,7 @@ abstract public class LearningProject {
 		cardStatus = deck.get();
 		seen++;
 		card = AllCards.getCard(cardStatus.getIndex());
+		
 		return true;
 	}
 	
@@ -113,18 +128,55 @@ abstract public class LearningProject {
 	
 	public void right(){
 		cardStatus.right();
+		Log.d(""+cardStatus.getLevel(),""+cardStatus.getIndex()); //*********** Added this line print status to LogCat
 		// put it in the appropriate index set
 		indexSets.get(cardStatus.getLevel()).add(cardStatus.getIndex());
 	}
 	
+	
 	public void wrong(){
 		cardStatus.wrong();
+		Log.d(""+cardStatus.getLevel(),""+cardStatus.getIndex()); //*********** Added this line print status to LogCat
 		// return to the deck
 		deck.put(cardStatus);		
 	}
 	
-	String deckStatus(){
-		String left = (deck.size()+1)+" left";
+	//*******
+	/***** Change added here 
+	 * 2 new methods to handle Undo Right and Wrong 
+	**/
+	public void UndoRight(){
+		cardStatus.undoRight();
+		Log.d(""+cardStatus.getLevel(),""+cardStatus.getIndex()); //*********** Added this line print status to LogCat
+		// put it in the appropriate index set
+	
+		//***** Checks if last status of card was decked means it was answered wrong and now user changed it to right
+		//***** then continue to next statement and remove it from the deck and added to index of answered correctly cards
+		//***** and set the decked value of the card to false as it was removed from the deck
+		if(cardStatus.decked){
+			deck.remove(cardStatus);
+			indexSets.get(cardStatus.getLevel()).add(cardStatus.getIndex());
+			cardStatus.decked=false;
+		}
+	}
+	
+	public void UndoWrong(){
+		cardStatus.UndoWrong();
+		Log.d(""+cardStatus.getLevel(),""+cardStatus.getIndex()); //*********** Added this line print status to LogCat
+		// return to the deck
+		//*** if statement to check if it was answered right before Undo and not in decked
+		//*** and now changed to answer to wrong then continue the next statement
+		//*** and put it in the deck and set cardStatus to deck
+		if(!cardStatus.decked){
+			deck.put(cardStatus);
+			cardStatus.decked=true;
+		}
+	}
+	/**
+	 *  ended here*/
+	
+	String deckStatus(){//******* added so if answer was right move to the top card
+		String left = (deck.size()+1+" left");
 		return seen > n ? left : seen + " of " + n + " seen, " + left; 
 	}
 	
