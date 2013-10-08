@@ -1,13 +1,53 @@
 package com.MeadowEast.xue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import android.media.MediaPlayer;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.ViewManager;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.app.Activity;
 //import java.text.DateFormat;
 //import java.text.ParseException;
-import java.util.*;
 
-import android.util.Log;
 
-abstract public class LearningProject {
+abstract public class LearningProject{
 	
 	private String name;
 	private int n, seen;
@@ -18,7 +58,13 @@ abstract public class LearningProject {
 	protected Card card = null;	
 	final static String TAG = "CC LearningProject";
 	
-	public LearningProject(String name, int n) {
+	MediaPlayer mpCorrect;
+	MediaPlayer mpWrong;
+	Context c;
+	int target;
+	
+	
+	public LearningProject(String name, int n, Context context) {
 		this.n = n;
 		this.name = name;
 		this.seen = 0;
@@ -31,7 +77,30 @@ abstract public class LearningProject {
 		Log.d(TAG, "Reading status");
 		readStatus();
 		Log.d(TAG, "Making deck");
-		deck = makeDeck(n, 700);
+//		deck = makeDeck(n, 700);
+		c = context;
+		mpWrong = MediaPlayer.create(c, R.raw.wrong);
+		mpCorrect = MediaPlayer.create(c, R.raw.correct);
+		
+				
+		if (MainActivity.mode.equals("ec")){
+			target = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
+	//		if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_EC_decktarget))){
+	//			SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+    //			editor.putString("ec_deck_target", c.getResources().getString(R.string.default_min_EC_decktarget));
+    //			editor.commit();
+	//			target=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
+	//		}
+		}
+		else if (MainActivity.mode.equals("ce")){
+			target = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ce_deck_target",""));
+	//		if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget))){
+	//			target=Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget));
+	//		} 
+		}
+		
+		deck = makeDeck(n,target);
+		
 		Log.d(TAG, "Exiting LearningProject constructor");
 	}	
 	
@@ -113,16 +182,20 @@ abstract public class LearningProject {
 	
 	public void right(){
 		cardStatus.right();
+		if (PreferenceManager.getDefaultSharedPreferences(c).getBoolean("sound_enable_checkbox", true) == true){
+			mpCorrect.start();
+		}
 		// put it in the appropriate index set
 		indexSets.get(cardStatus.getLevel()).add(cardStatus.getIndex());
-		//LearnActivity.mp.start();
 	}
 	
 	public void wrong(){
 		cardStatus.wrong();
+		if (PreferenceManager.getDefaultSharedPreferences(c).getBoolean("sound_enable_checkbox", true) == true){
+			mpWrong.start();
+		}
 		// return to the deck
-		deck.put(cardStatus);
-		//LearnActivity.mpwrong.start();
+		deck.put(cardStatus);		
 	}
 	
 	String deckStatus(){
@@ -135,6 +208,11 @@ abstract public class LearningProject {
 		for (int i=0; i<5; ++i) n[i] = indexSets.get(i).size();
 //		return String.format("  %7d  %4d  %4d  %4d  %4d  %7d  %5d  ", n[0], n[1], n[2], n[3], n[4],
 //				n[2]+n[3]+n[4], n[0]+n[1]+n[2]+n[3]+n[4]);
+		Log.d(TAG, Integer.toString(n[0]));
+		Log.d(TAG, Integer.toString(n[1]));
+		Log.d(TAG, Integer.toString(n[2]));
+		Log.d(TAG, Integer.toString(n[3]));
+		Log.d(TAG, Integer.toString(n[4]));
 		return String.format("    %d   %d + %d = %d    %d + %d = %d    %d",
 				n[0], n[1], n[2], n[1]+n[2], n[3], n[4], n[3]+n[4], n[0]+n[1]+n[2]+n[3]+n[4]);
 	}
@@ -183,16 +261,16 @@ abstract public class LearningProject {
 			Log.d(TAG, "OBJECT status file read without problems");
 		} catch (Exception e) { Log.d(TAG, "Error in readStatus"); }
 	}
-
-
+	
+	//////////////////////////////////////
 	public String getHanzi() {
-		return card.getHanzi();
-	}
-	public String getPinyin() {
-		return card.getPinyin();
-	}
-	public String getEnglish() {
-		return card.getEnglish();
-	}
-
+		    return card.getHanzi();
+		  }
+		  public String getPinyin() {
+		    return card.getPinyin();
+		  }
+		  public String getEnglish() {
+		    return card.getEnglish();
+		  }
+		  //////////////////////////////////////////////////
 }

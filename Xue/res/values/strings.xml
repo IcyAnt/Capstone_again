@@ -14,5 +14,41 @@
     <string name="reallyQuit">Quit and lose all progress on current deck?</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
-
+    
+    <color name="background">#FF0000</color>
+   
+    <string name="default_EC_decksize">40</string>
+    <string name="default_CE_decksize">60</string>
+    <string name="default_EC_decktarget">700</string>
+    <string name="default_CE_decktarget">700</string>
+    <string name="default_min_EC_decksize">5</string>
+    <string name="default_min_CE_decksize">5</string>
+    <string name="default_min_EC_decktarget">50</string>
+    <string name="default_min_CE_decktarget">50</string>
+    
+    <string name="title_SettingsActivity">Study Tool Settings</string>
+    <string name="title_sound_settings">Sound Settings</string>
+    <string name="title_sound_enable_checkbox">Sound Toggle</string>
+    <string name="summary_sound_enable_checkbox">Check to enable sounds</string>
+    
+    <string name="title_ec_deck_settings">English-Chinese Deck Settings</string> 
+    <string name="title_ec_deck_size">Deck Size</string>
+    <string name="summary_ec_deck_size">Set the deck size for the English-Chinese deck</string>
+    <string name="dialogtitle_ec_deck_size">Deck Size (default=40, min=5)</string>
+  	<string name="title_ec_deck_target">Deck Target</string>
+  	<string name="summary_ec_deck_target">Limit the number of cards mainly being learned for the English-Chinese Deck</string>
+  	<string name="dialogtitle_ec_deck_target">Deck Target (default=700, min=50))</string>
+    
+    <string name="title_ce_deck_settings">Chinese-English Deck Settings</string> 
+    <string name="title_ce_deck_size">Deck Size</string>
+    <string name="summary_ce_deck_size">Set the deck size for the Chinese-English deck</string>
+    <string name="dialogtitle_ce_deck_size">Deck Size (default=60, min=5)</string>
+  	<string name="title_ce_deck_target">Deck Target</string>
+  	<string name="summary_ce_deck_target">Limit the number of cards mainly being learned for the Chinese-English Deck</string>
+  	<string name="dialogtitle_ce_deck_target">Deck Target (default=700, min=50))</string>
+  	
+  	<string name="ok">OK</string>
+  	<string name="warn">Warning</string>
+  	<string name="warn_reset_min">Value was below minimum; the minimum value will be used instead.</string>
+  	<string name="warn_reset_default">Value was invalid; this setting is reset to default.</string>
 </resources>

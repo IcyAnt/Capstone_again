@@ -3,10 +3,17 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp" >
-
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:format="%s" />
+
     <TextView
         android:id="@+id/promptTextView"
         android:layout_width="fill_parent"
@@ -14,9 +21,10 @@
         android:layout_weight=".3"
         android:gravity="bottom|center"
         android:text="@string/hello_world"
+        android:textIsSelectable="true"
         android:textSize="40sp"
         tools:context=".MainActivity" />
-
+
     <TextView
         android:id="@+id/answerTextView"
         android:layout_width="fill_parent"
@@ -24,8 +32,9 @@
         android:layout_weight=".3"
         android:ems="10"
         android:gravity="center"
+        android:textIsSelectable="true"
         android:textSize="40sp" />
-
+
     <TextView
         android:id="@+id/otherTextView"
         android:layout_width="fill_parent"
@@ -33,6 +42,7 @@
         android:layout_weight=".3"
         android:ems="3"
         android:gravity="top|center"
+        android:textIsSelectable="true"
         android:textSize="40sp" />
 
     <LinearLayout
@@ -40,26 +50,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
-
         <Button
             android:id="@+id/advanceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/show"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/okayButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/okay" 
-            android:textSize="40sp" />
+            android:text="@string/okay"
+            android:textSize="40sp"
+            tools:ignore="ButtonStyle" />
 
     </LinearLayout>
-
-
-
-
 
     <TextView
         android:id="@+id/statusTextView"

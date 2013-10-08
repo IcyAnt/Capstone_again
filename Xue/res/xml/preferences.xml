@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/title_SettingsActivity">
+    
+	<PreferenceCategory android:title="@string/title_sound_settings">
+		<CheckBoxPreference 
+		    android:key="sound_enable_checkbox"
+		    android:defaultValue="true"
+			android:title="@string/title_sound_enable_checkbox"
+			android:summary="@string/summary_sound_enable_checkbox">	    
+		</CheckBoxPreference>		
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/title_ec_deck_settings">
+		 <EditTextPreference
+		     android:key="ec_decksize"
+             android:title="@string/title_ec_deck_size"
+             android:defaultValue="@string/default_EC_decksize"
+             android:summary="@string/summary_ec_deck_size"
+             android:inputType="number"
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ec_deck_size" />
+		<EditTextPreference
+		     android:key="ec_deck_target"
+             android:title="@string/title_ec_deck_target"
+             android:defaultValue="@string/default_EC_decktarget"
+             android:summary="@string/summary_ec_deck_target"
+             android:inputType="number"
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ec_deck_target" />		 
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/title_ce_deck_settings">
+		 <EditTextPreference
+		     android:key="ce_decksize"
+             android:title="@string/title_ce_deck_size"
+             android:defaultValue="@string/default_CE_decksize"
+             android:summary="@string/summary_ce_deck_size"
+             android:inputType="number"
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ce_deck_size">
+        </EditTextPreference>
+		<EditTextPreference
+		     android:key="ce_deck_target"
+             android:title="@string/title_ce_deck_target"
+             android:defaultValue="@string/default_CE_decktarget"
+             android:summary="@string/summary_ce_deck_target"
+             android:inputType="number"
+             android:digits="0123456789"
+             android:dialogTitle="@string/dialogtitle_ce_deck_target" />		 
+	</PreferenceCategory>
+		 
+	
+	
+</PreferenceScreen>
