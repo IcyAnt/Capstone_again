@@ -85,18 +85,18 @@ abstract public class LearningProject{
 				
 		if (MainActivity.mode.equals("ec")){
 			target = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
-			if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_EC_decktarget))){
-				SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
-    			editor.putString("ec_deck_target", c.getResources().getString(R.string.default_min_EC_decktarget));
-    			editor.commit();
-				target=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
-			}
+	//		if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_EC_decktarget))){
+	//			SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+    //			editor.putString("ec_deck_target", c.getResources().getString(R.string.default_min_EC_decktarget));
+    //			editor.commit();
+	//			target=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ec_deck_target",""));
+	//		}
 		}
 		else if (MainActivity.mode.equals("ce")){
 			target = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(c).getString("ce_deck_target",""));
-			if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget))){
-				target=Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget));
-			} 
+	//		if (target < Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget))){
+	//			target=Integer.parseInt(c.getResources().getString(R.string.default_min_CE_decktarget));
+	//		} 
 		}
 		
 		deck = makeDeck(n,target);
@@ -261,5 +261,16 @@ abstract public class LearningProject{
 			Log.d(TAG, "OBJECT status file read without problems");
 		} catch (Exception e) { Log.d(TAG, "Error in readStatus"); }
 	}
-
+	
+	//////////////////////////////////////
+	public String getHanzi() {
+		    return card.getHanzi();
+		  }
+		  public String getPinyin() {
+		    return card.getPinyin();
+		  }
+		  public String getEnglish() {
+		    return card.getEnglish();
+		  }
+		  //////////////////////////////////////////////////
 }

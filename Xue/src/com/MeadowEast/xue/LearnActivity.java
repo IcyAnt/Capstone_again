@@ -25,6 +25,9 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 
 public class LearnActivity extends Activity implements OnClickListener, OnLongClickListener {
 	static final String TAG = "LearnActivity";
@@ -77,37 +80,38 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
     	timer = (Chronometer) findViewById(R.id.chronometer);
     	
     	if (MainActivity.mode.equals("ec")){
-    		try {
+    		
+    	//	try {
     			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
-    		} catch(NumberFormatException e){
-    			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("ec_decksize", getString(R.string.default_EC_decksize));
-    			editor.commit();
-    			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
-    		}
-    		if (ECDECKSIZE < Integer.parseInt(getString(R.string.default_min_EC_decksize))){
-    			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("ec_decksize", getString(R.string.default_min_EC_decksize));
-    			editor.commit();
-    			ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
-    		}
+    	//	} catch(NumberFormatException e){
+    		//	SharedPreferences.Editor editor = prefs.edit();
+    		//	editor.putString("ec_decksize", getString(R.string.default_EC_decksize));
+    		//	editor.commit();
+    		//	ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
+    	//	}
+    	//	if (ECDECKSIZE < Integer.parseInt(getString(R.string.default_min_EC_decksize))){
+    	//		SharedPreferences.Editor editor = prefs.edit();
+    	//		editor.putString("ec_decksize", getString(R.string.default_min_EC_decksize));
+    	//		editor.commit();
+    	//		ECDECKSIZE = Integer.parseInt(prefs.getString("ec_decksize", ""));
+    	//	}
     		lp = new EnglishChineseProject(ECDECKSIZE, this);	
     	}
     	else{
-   		try {
+   	//	try {
     			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
-    		} catch(NumberFormatException e){
-    			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("ce_decksize", getString(R.string.default_CE_decksize));
-    			editor.commit();
-    			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
-    		}
-    		if (CEDECKSIZE < Integer.parseInt(getString(R.string.default_min_CE_decksize))){
-    			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString("ce_decksize", getString(R.string.default_min_CE_decktarget));
-    			editor.commit();
-    			CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
-    		}
+    	//	} catch(NumberFormatException e){
+    	//		SharedPreferences.Editor editor = prefs.edit();
+    	//		editor.putString("ce_decksize", getString(R.string.default_CE_decksize));
+    	//		editor.commit();
+    	//		CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
+    	//	}
+    	//	if (CEDECKSIZE < Integer.parseInt(getString(R.string.default_min_CE_decksize))){
+    	//		SharedPreferences.Editor editor = prefs.edit();
+    	//		editor.putString("ce_decksize", getString(R.string.default_min_CE_decktarget));
+    	//		editor.commit();
+    	//		CEDECKSIZE = Integer.parseInt(prefs.getString("ce_decksize", ""));
+    	//	}
     		lp = new ChineseEnglishProject(CEDECKSIZE, this);
     	}
     	clearContent();
@@ -210,7 +214,43 @@ public class LearnActivity extends Activity implements OnClickListener, OnLongCl
     	case R.id.promptTextView:
     	case R.id.answerTextView:
     	case R.id.otherTextView:
-    		Toast.makeText(this, "Item index: "+lp.currentIndex(), Toast.LENGTH_LONG).show();
+    	
+/////////////////////////////////////////////////////////
+    		Log.d("Xue ISSELECTED", "About to check");
+    		        int start = ((TextView) v).getSelectionStart();
+    		        int end = ((TextView) v).getSelectionEnd();
+    		        if(start < end)
+    		        {
+    		          Log.d("Xue ISSELECTED", "yes");
+    		          CharSequence selectedSequence = ((TextView) v).getText();
+    		          selectedSequence = selectedSequence.subSequence(start, end);
+    		          String selected = selectedSequence.toString();
+    		          //selected = selected.substring(start, end);
+    		          Log.d("Xue ISSELECTED", selected);
+    		          Uri dictionary = Uri.parse("http://www.mdbg.net/chindict/chindict.php?page=worddict&wdrst=0&wdqb=" + selected);
+    		          Intent webview = new Intent(Intent.ACTION_VIEW, dictionary);
+    		          startActivity(webview);
+    		        }
+    		        else {
+    		          Log.d("Xue ISSELECTED", "no");
+    		          Intent email = new Intent(Intent.ACTION_SENDTO);
+    		          Uri uri = Uri.parse("mailto:kgall@hunter.cuny.edu");
+    		          email.setData(uri);
+    		          //email.putExtra(Intent.EXTRA_EMAIL, new String[]{"kgall@hunter.cuny.edu"});
+    		          if(MainActivity.mode == "ec")
+    		          {
+    		            email.putExtra(Intent.EXTRA_SUBJECT, "Xue English to Chinese index " + lp.currentIndex());
+    		          }
+    		          else {
+    		            email.putExtra(Intent.EXTRA_SUBJECT, "Xue Chinese to English index " + lp.currentIndex());
+    		          }
+    		          email.putExtra(Intent.EXTRA_TEXT, "English: " + lp.getEnglish() +"\nPinyin: "+ lp.getPinyin() + "\nHanzi: " + lp.getHanzi() + "\nComments ( ): \n");
+    		          startActivity(Intent.createChooser(email, "Send Comments"));
+    		          Toast.makeText(this, "Item index: "+lp.currentIndex(), Toast.LENGTH_LONG).show();
+    		        }
+  //////////////////////////////////
+    		
+    	Toast.makeText(this, "Item index: "+lp.currentIndex(), Toast.LENGTH_LONG).show();
     		break;
     	}
     	return true;
